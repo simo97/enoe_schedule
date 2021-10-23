@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/gocolly/colly"
 )
@@ -40,21 +41,14 @@ func _getCity(id string) []ObservationType {
 	}
 
 	var res ENEOReponse
-	// fmt.Println(resp.Body)
 	json.NewDecoder(resp.Body).Decode(&res)
 
-	// fmt.Println(res.Data)
 	return res.Data
 
 }
 
-func _writeToFile(content string, file *os.File) {
-	file.WriteString(content)
-}
-
 func getCitySchdule(regionsChannel chan string, cities *[]ObservationType) {
 	for {
-		// fmt.Println(cities)
 		select {
 		case id := <-regionsChannel:
 			*cities = append(*cities, _getCity(id)...)
@@ -66,8 +60,8 @@ func main() {
 	a := make(chan string)
 
 	c := colly.NewCollector()
-
-	fName := "observations.json"
+	t := time.Now()
+	fName := "scheduled_interuptions." + t.Format("2006-01-02 15:04:05") + ".json"
 	file, err := os.Create(fName)
 	if err != nil {
 		log.Fatalf("Cannot create file %q: %s\n", fName, err)
