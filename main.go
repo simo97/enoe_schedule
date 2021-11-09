@@ -62,6 +62,8 @@ func main() {
 			log.Fatal(err)
 		}
 		file.Write(res)
+		// save to redis here as well
+		ConnectToRedis(res)
 	}()
 
 	go getCitySchdule(a, &cities)
@@ -87,6 +89,5 @@ func main() {
 	})
 
 	c.Visit("https://alert.eneo.cm/?header=no")
-	ConnectToRedis()
 
 }
